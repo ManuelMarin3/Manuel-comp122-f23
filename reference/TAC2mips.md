@@ -28,6 +28,13 @@ Note that sometimes there is not a 100% direct correlation between your JAVA TAC
            * add: +, sub: -, or: |, and: &, xor: ^,
 
 
+      | TAC Subroutine                | MIPS Instruction          |
+      |-------------------------------|---------------------------|
+      | `return a;`                   | `move $v0, a`             |
+      |                               | `jr $ra`                  |
+      | `return imm;`                 | `li $v0, imm`             |
+      |                               | `jr $ra`                  |
+
       | TAC Equations                 | MIPS Instructions         |
       |-------------------------------|---------------------------|
       | `;`                           | `nop`                     |
@@ -113,11 +120,10 @@ Note that sometimes there is not a 100% direct correlation between your JAVA TAC
       | `}`                               |                            |
       |                                   |                            |
       | `for(; a <cond> b ;) {`           | `b<! cond> a, b, {done}`   |
+      | `while(a <cond> b) {`             | `b<! cond> a, b, {done}`   |
       |                                   |                            |
       | `for(; a <cond> b ;) {`           | `b<cond> a, b, {body}`     |
       |                                   | `b {done}`                 |
-      |                                   |                            |
-      | `while(a <cond> b) {`             | `b<! cond> a, b, {done}`   |
       |                                   |                            |
 
 
@@ -131,10 +137,17 @@ Note that sometimes there is not a 100% direct correlation between your JAVA TAC
       | `>`          | `gt`          | `le`            |  `>=`         |
    
 
-      | JAVA: MIPS OS Interface       | MIPS Macro                |
+
+      | MIPS Output Routines          | MIPS Macro                |
       |-------------------------------|---------------------------|
-      | `mips.print_t(a);`            | `print_t(a)`              |
-      | `mips.print_ti(imm);`         | `print_ti(imm)`           |
-      | `mips.print_c(a);`            | `print_c(a)`              |
-      | `mips.print_ci(imm);`         | `print_ci(imm)`           |
+      | `mips.print_d(a);`            | `print_d(a)`              |
+      | `mips.print_di(imm);`         | `print_di(imm)`           |
       |  See print_routines.md        | etc., etc., etc.,         |
+
+      | MIPS Intput Routines          | MIPS Macro                |
+      |-------------------------------|---------------------------|
+      | `mips.read_d();`              | `read_d()`                |
+      | `mips.read(fd, buff, imm);`   | `read(fd, buff, imm)`     |
+      | `mips.sbrk(size)`             | `sbrk(size)`              |
+      | `mips.sbrki(imm)`             | `sbrki(imm)`              |
+      | `X = mips.retval();`          | `move X, $v0`             |
