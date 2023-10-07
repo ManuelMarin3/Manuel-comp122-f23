@@ -1,131 +1,89 @@
-# COMP122 Lecture Notes: October 02, 2023
+# COMP122 Lecture Notes: October 04, 2023
 
 ## Announcements:
-   1. Git Merge Conflicts
-      - Such conflicts are common
-        - changes you made versus changes made by others may induce conflicts
-        - you are required to resolve conflicts as part of the development process
 
-      - bin/MIPS_OS_Interface.class
-        - I made updates to bin/MIPS_OS_Interface.java
-        - Some students are running a different version of Java
-        - If you have committed your version of bin/MIPS_OS_Interface.class, 
-          a merge conflict will occur
+   1. Assignment: Checksum
+      - Status: Assigned
+      - Deliverable ID: 42
+      - Invitation URL: https://classroom.github.com/a/BlKyKwkj
+      - Due Date: Oct 12 23:59:59  (Thursday)
 
-      - to address this mismatch, you can do the following
-      ```
-      cd ~/classes/comp122
-      git rm bin/MIPS_OS_Interface.class
-      git commit -m 'removed .class file' 
-      git pull
-      ```
+   1. TAC2mips.md
+      - print this file out
+      - have it handing 
+        - when I am doing a code demostration
+        - when you are working on  `method.j` --> `method.s`
 
-   1. Assignments:
-      * Graded
-        - 11-practice-quiz-models/
-        - 41-pemdas-tac/
-      * Due
-        - 21-table-encodings: Oct 03 23:59:59 (Tuesday)
-        - 22-utf-8: Oct 05 23:59:59 (Thursday)
-    
+      
 ## Today's Agenda:
-   1. Lecture
-      - Introduction to Numbering Systems
+   1. Lecture --> Lab
+      1. Review of the For-loop Transformation
+         - Factorial
+      1. make and makefile
+      1. git tags
+
+      1. Revised Factorial:  N!
+         - read the value of N, from stdin
+
+         - Java for COMP110, COMP182, COMP282
+
+           * The following code is how you would typical read a value from stdin 
+             ```java  
+             import java.util.Scanner;
+
+             //...
+
+             Scanner stdin = new Scanner(System.in);
+             int num = stdin.nextInt();
+             ```
+
+         - Java for COMP122
+           * java_subroutine includes a class (mips) to make things easier for COMP122
+           * The following code is how you do it in COMP122
+              ```java
+              mips.read()
+              num = mips.retval()
+              ```
+              
+         - Native MIPS
+         ```mips
+         .macro read_d()
+           nop                     # Reads from stdin, a decimal (%d) number
+           li $v0, 5
+           syscall                 
+           nop                     # The value is now in $v0
+         .end_macro
+
+         read_d()
+         move num, $v0
+         ```
 
    1. Lab:
-      1. Re-Review If-then-else --> TAC Transformation --> MIPS
-      1. For-loop --> TAC Transformation --> MIPS
-         - For-loop is just a well-structured while-loop
-
-      1. Examples:
-         1. Count down
-         1. Summation
+      1. Checksum Practicum
+         - slide_presentation/checksum.pdf
+      1. Lab description
+         - private template: https://github.com/COMP122/42-checksum
+         - Invitation link: https://classroom.github.com/a/BlKyKwkj
 
 
 ## Questions from Last Lecture/Lab, etc.:
    * M/W @ 9:00 am
-     - Endian and it's affect
-     - Universal Computer and two programs: OS and users
-     - Markdown question on .png and then layout
+     - Clarification on use of .include
+     - Can we do a double nested loop ?
 
    * T/R @ 9:00 am
-     - How do ONE review the grade-report and use the grade_guessimator?
+     - none
+
 
 
 ---
 # Today's Lecture Material
 
-  1. Introduction to Numbering Systems
-     - introduction-to-numbering-systems.pdf
+  1. Bitwise and/or Checksum  (see slides)
  
 
 # Today's Lab Material
-  1. Comment:  The defined process
-     * Many students did not follow the process in 41-
-     * Having your program yield the correct result is NOT sufficient.
-     * Follow the process to ensure 
-       - you are coach-able,
-       - you know how to follow a specification,
-       - you can deliver what is expected,
-       - you can be successful as a CS/IT/SE Professional!
-
-  1. Development Process:
-     1. Write Java Subroutine: `method.j`
-        - ensure that it is 100% correct
-     1. Rewrite Java Subroutine into TAC style:  `method.`
-        - ensure that it is 100% correct
-        - ensure it it in PROPER TAC form
-     1. Transliterate your Java subroutine into MIPS: `method.s`
-        - Copy your `method.j` into `method.s`
-        - Comment out your Java Code
-        - Transliterate: line by line!
-          ```
-          {label}:      {mips instruction}       #  {java instruction}
-          ```
-        - If you have to do more than transliteration, 
-          - your Java code is WRONG--even it generates the desired results!
-
-
-  1. Review: Algorithm If-then-else --> TAC Transformation
-     1. Identify the parts of the if-the-else statement
-        * {test}: the boolean expression of the if-then-else
-        * {cons}: the consequence code block for the if-then-else
-        * {alt}:  the alternative code block for the if-then-else
-        * {done}: the first line of code executed after the if-then-else
-
-     1. Insert the {init} label, with a null statement, before the start of the if-then-else
-     1. Append the {done} label, with a null statement, after the end of the if-then-else
-
-     1. Insert the {cons} label, with a null statement, at top of the consequence code block
-     1. Append '// goto {done};' to the end of consequence code block
-
-     1. Insert the {alt} label, with a null statement, at top of the alternative code block
-     1. Append '// goto {done};' to the end of consequence code block
-
-        * The resulting template before code movement
-
-          ```java tac
-          init:    ;
-                   if(  <test>  ) {
-          cons:      ;
-                     <consequence>
-                     // goto done;
-                    } else {   ;
-          alt:       ;
-                     <alternative>
-                     // goto done;
-                   }
-          done:    ;
-          ```
-
-     1. Simplify the boolean expression into three parts
-        - evaluate the left-hand side into $l
-          - move the eval of $l into the {init} block
-        - evaluate the righ-hand side into $r
-          - move the eval of $r into the {init} block
-        - replace the boolean expression with a simple test:  `$l <cond> $r`
-          - yielding:    `if ( $l <cond> $r ) {`
-
+  1. Review For-loop Transformation
 
 
   1. Algorithm For-loop (aka structured while-loop) --> TAC Transformation
@@ -195,13 +153,13 @@
           - yielding:    `loop: for(;  $l <cond> $r ;)`
 
 
+  1. Example:
+     - Factorial
 
-  1. Examples on For Loop 
-     - Count-down (see Resources below)
-     - Summation
- 
-     * See addendum_10_02_* directories for the examples done in class.
-     
+  1. Practicum: Checksum
+     - This is your lab!
+     - Take good notes!
+     - My notes will not be made available to you!
 
 ---
 ## Resources
