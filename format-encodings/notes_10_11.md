@@ -1,62 +1,61 @@
-# COMP122 Lecture Notes: October 04, 2023
+# COMP122 Lecture Notes: October 11, 2023
 
 ## Announcements:
 
-   1. Assignment: quiz-models
-      - Status: Graded
-      - Average: 78
-``
+1. Name: Base Conversion and Floating Point Representation
+   - Status: Released
+   - Deliverable ID: 23-
+   - Invitation URL: https://classroom.github.com/a/hVsevPB0
+   - Due Date: Oct 15 23:59:59 (Sunday)
+ 
+ 1. Name: Bitwise Operations
+   - Status: Released
+   - Deliverable ID: 24-
+   - Invitation URL: https://classroom.github.com/a/iMnfacqu
+   - Due Date: Oct 17 23:59:59 (Tuesday)
+
+1. Assignment: binary32 
+   - Status: Reviewed In Class
+   - Deliverable ID: 43
+   - Template URL: https://github.com/COMP122/43-binary32
+   - Invitation URL: TBP [To Be Provided] on Friday!
+   - Due Date: Oct 19 23:59:59 (Thursday)
+
+1. Tool Developed by former students of COMP122
+   - conversion between different bases
+   - https://www.csun.edu/~steve/classes/integers-conversion-encoding/integer-conversion.html
+
       
 ## Today's Agenda:
-   1. Random view of quiz submissions
-
-   1. Floating Point Encoding: floating-point-encoding.pptx
-
    1. Bitwise Operations: bitwise-operations.pptx 
+   1. Tidbit on Merge Conflicts
 
+   1. Binary32 Encoding Algorithm Review
+
+   1. Practicum in Binary32 Decoding
 
 
 ## Questions from Last Lecture/Lab, etc.:
    * M/W @ 9:00 am
-     - Can I commit to the comp122 repository
-       - yes, but you need to address merge conflicts
-       - yes, but you CAN NOT push to the remote repo
+     - \*.class files don't put into rep ... why?
+     - a += 3;  -->  a = a + 3;  addi $X, $X, 3
 
    * T/R @ 9:00 am
-
+     - no questions, no answers!
 
 
 ---
 # Today's Lecture Material
-   1. Random view of quiz submissions
-      - view_random_submission.bash  10-quiz-models
-        - Proper Rendering:  open submission.md
-        - Proper Editing:    subl -n submission.md
-        - Just the reponses: make
-
-  1. Floating Point Encoding: floating-point-encoding.pdf
-  1. Floating Point Encoding (encode_float.mdf)
-  <!--
   1. Bitwise Operations: bitwise-operations.pdf
-  -->
+
 
 # Today's Lab Material
-  1. Field Questions on Checksum Project
-     - slide_presentation/checksum.pdf
-     - for-loop --> for-loop TAC  -> MIPS
-     - register book keeping, with multiple use of a register
-     - mips.read_d() in JAVA
+  1. Binary32 Encoding: Review
 
-  1. Review of Floating Point Assignment
-     - https://github.com/COMP122/floating-point-encoding/blob/main/assignment.md
-     - Note this above URL is associated with a private repository
-  
-  <!--    
-  1. TAC for Shift Instructions
-     - mips_cli
-
-  1. Floating Point algorithm 
-  -->    
+  1. Practicum: Binary32 Decoding
+     - separating the pieces
+     - repositioning the pieces
+     - outputting the pieces
 
 ---
 ## Resources
@@ -71,6 +70,8 @@
    | `x = a;`                      | `move x, a`               |
    | `x = a <op_i> imm; `          | `<op_i> x, a, imm`        |
    | `x = a <op> b;`               | `<op> x, a, b`            |
+
+      
    | `x = ~ a;`                    | `nor x, a, $zero`         |
    | `x = a >>> imm;`              | `srl x, a, imm`           |
    | `x = a >> imm;`               | `sra x, a, imm`           |
