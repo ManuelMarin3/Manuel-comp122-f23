@@ -114,7 +114,8 @@ Note that sometimes there is not a 100% direct correlation between your JAVA TAC
       | `if (a <cond> b) {`               | `b<cond> a, b, {cons}`     |
       |                                   | `b {alt}`                  |
       |                                   |                            |
-      | `if (a <cond> b) break;`          | `b<cond> a, b, {done}`     |
+      | `if (a <cond> b) break label;`    | `b<cond> a, b, {done}`     |
+      | `if (a <cond> b) continue label;` | `b<cond> a, b, label`      |
       |                                   |                            |
       | `} else {`                        |                            |
       | `}`                               |                            |
@@ -125,6 +126,8 @@ Note that sometimes there is not a 100% direct correlation between your JAVA TAC
       | `for(; a <cond> b ;) {`           | `b<cond> a, b, {body}`     |
       |                                   | `b {done}`                 |
       |                                   |                            |
+      * Note: we presume that the original Java code does not include
+        any "continue" statements. See appendix for proper treatment.
 
 
       | `TAC <cond>` | `MIPS <cond>` | `MIPS <! cond>` |`TAC <! cond>` |
@@ -146,12 +149,93 @@ Note that sometimes there is not a 100% direct correlation between your JAVA TAC
       | `mips.print_di(imm);`         | `print_di(imm)`           |
       |  See print_routines.md        | etc., etc., etc.,         |
 
-      1. MIPS Input Routins
+      1. MIPS Input Routines
 
       | Java TAC                      | MIPS Macro                |
       |-------------------------------|---------------------------|
       | `mips.read_d();`              | `read_d()`                |
       | `mips.read(fd, buff, imm);`   | `read(fd, buff, imm)`     |
-      | `mips.sbrk(size)`             | `sbrk(size)`              |
-      | `mips.sbrki(imm)`             | `sbrki(imm)`              |
+      | `mips.sbrk(size);`            | `sbrk(size)`              |
+      | `mips.sbrki(imm);`            | `sbrki(imm)`              |
       | `X = mips.retval();`          | `move X, $v0`             |
+
+## Appendix
+
+   1. "Continue" Statement
+      If your original Java code contains a "continue" statement, the 
+      the simplistic method used to perform the Java -> Java TAC 
+      transformation needs to be augmented.
+
+      Consider the following sample Java code
+      ```java
+
+      for (i=0; i <=10; i++) {
+
+        if ( a < b ) continue;
+
+        a = pem + das;
+
+        if ( a < b ) break;
+
+      }
+      ```
+
+      ```java TAC
+      // This is the translation using the simplistic method
+      init:  ;
+             i = 0; 
+      loop:  for (; i <=10 ;) { 
+      body:    ;
+               if ( a < b ) continue;
+
+               a = pem + das;
+
+               if ( a < b ) break;
+      next:    ;
+               i++;
+               continue loop;
+             }
+      done:  ;
+      ```
+
+      Consider line 189 above.  The `continue` statement results
+      in line 187 to be executed next.  But we need to execute line
+      194 to keep the semantics of the original code.
+
+      To address this issue, a copy of the 'next' block must be
+      copied and placed just prior to the users "continue" statement.
+      This transformation is depicted in the following code block.
+      ```java TAC
+      // This is the more robust translation approach
+      init:  {
+               ;
+               i = 0; 
+             }
+      loop:  for (; i <=10 ;) { 
+      body:    {
+               ;
+               if ( a < b ) {
+                { // copy of the next block
+                  ;
+                  i++;
+                }
+                continue loop;
+               }
+               a = pem + das;
+
+               if ( a < b ) break;
+               }
+      next:    {
+                  ;
+                  i++;
+               }
+               continue loop;
+             }
+      done:  ;
+      ```
+
+      If you could use a "goto" in Java, a "continue" statement could
+      be transformed into a "goto {next}".
+
+
+

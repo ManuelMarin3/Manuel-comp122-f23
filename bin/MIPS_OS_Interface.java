@@ -1,5 +1,7 @@
 import java.util.Scanner;
 import java.lang.Math;
+//import java.util.*; 
+//import java.util.regex.Pattern; 
 
 class MIPS_OS_Interface {
 
@@ -15,16 +17,21 @@ class MIPS_OS_Interface {
   static int $sp = -1;
   static int $ra = -1;
 
+
   public static void read(int fd, int buffer, int size) {
     // restictied to fd = 0, size = 4;
      Scanner _scanner = stdin;
      if (fd != 0 || size != 1) {
        return;
      }
-     MEM[buffer] = stdin.nextByte();
-     print_d(MEM[buffer]);
-     print_ci('\n');     print_ci('\n');
-     $v0 = 1;
+     if (stdin.hasNext() == true) {
+       MEM[buffer] = stdin.nextByte();
+       print_d(MEM[buffer]);
+       print_ci('\n');     print_ci('\n');
+       $v0 = 1;
+     } else {
+       $v0 = 0;
+     }
   }
 
   public static void read(int fd, int buffer[], int size) {
@@ -33,14 +40,20 @@ class MIPS_OS_Interface {
      if (fd != 0 || size != 4) {
        return;
      }
-     buffer[0] = stdin.nextInt();
-     $v0 = 4;
+     if (stdin.hasNext()) {
+       buffer[0] = stdin.nextInt();
+       $v0 = 4;
+     } else {
+       $v0 = 0;
+     }
   }
 
   // MEMORY
   static int sbrk_p = 0;
   static byte[] MEM = new byte[1024];
   static int[] stack = new int[256];
+
+
 
   //  TYPE Conversion
   public static int u_byte(byte value) {
@@ -61,6 +74,7 @@ class MIPS_OS_Interface {
     return $v0;
   }
 
+
   public static void sbrk(int size) {
     $v0 = sbrk_p;
     sbrk_p += size;
@@ -71,8 +85,31 @@ class MIPS_OS_Interface {
   }
 
   public static void read_c() {
-    $v0 = (int) stdin.nextByte();
+    String str = stdin.findInLine(".");
+
+    if (str == null) {
+      $v0 = '\0';
+    }
+    else {
+      $v0 = str.charAt(0);
+    }
   }
+
+  public static void read_s(char [] A, int count) {
+    String str;
+    char [] temp;
+
+    str = stdin.nextLine();
+    temp = str.toCharArray();
+
+    for (int i=0; i< str.length(); i++) {
+       A[i] = temp[i];
+    }
+
+    $v0 = str.length();
+  }
+
+
 
   public static void read_x() {
     $v0 = stdin.nextInt(16);
@@ -107,6 +144,15 @@ class MIPS_OS_Interface {
 
   public static void print_s(String register) {
     System.out.printf("%s", register);
+    return;
+  }
+
+  public static void print_s(char [] register) {
+    StringBuilder str 
+            = new StringBuilder(""); 
+
+    str.append(register);
+    System.out.printf("%s", str);
     return;
   }
 
