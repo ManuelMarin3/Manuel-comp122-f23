@@ -1,4 +1,4 @@
-# COMP122 Lecture Notes: October 23, 2023
+# COMP122 Lecture Notes: November 1, 2023
 
 ## Announcements:
    1. Assignments
@@ -48,7 +48,7 @@
        (in various base)?   see the lab.
 
    * T/R @ 9:00 am
-
+     - No questions for now!
 
 ---
 # Today's Lecture Material
